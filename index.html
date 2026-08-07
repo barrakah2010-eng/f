@@ -50,9 +50,7 @@
             display: none !important;
         }
 
-        /* -------------------------------------------------------------
-           CELEBRATION OVERLAY & RAINBOW TEXT
-        ------------------------------------------------------------- */
+        /* Celebration Overlay */
         .celebration-overlay {
             position: fixed;
             top: 0;
@@ -110,9 +108,7 @@
             to { opacity: 1; }
         }
 
-        /* -------------------------------------------------------------
-           AUTH / LANDING VIEW
-        ------------------------------------------------------------- */
+        /* Auth View */
         .auth-container {
             min-height: 100vh;
             display: flex;
@@ -121,30 +117,6 @@
             background: linear-gradient(135deg, #1e0036 0%, #0c0827 50%, #1a103c 100%);
             position: relative;
             padding: 20px;
-        }
-
-        .auth-container::before {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(108, 92, 231, 0.4) 0%, rgba(0,0,0,0) 70%);
-            top: 10%;
-            left: 15%;
-            border-radius: 50%;
-            filter: blur(50px);
-        }
-
-        .auth-container::after {
-            content: '';
-            position: absolute;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(162, 155, 254, 0.3) 0%, rgba(0,0,0,0) 70%);
-            bottom: 10%;
-            right: 15%;
-            border-radius: 50%;
-            filter: blur(50px);
         }
 
         .auth-card {
@@ -248,7 +220,6 @@
         .form-control:focus {
             border-color: var(--primary-light);
             background: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 0 15px rgba(162, 155, 254, 0.2);
         }
 
         .btn-primary {
@@ -267,7 +238,6 @@
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2);
             background: #f0f0f0;
         }
 
@@ -281,9 +251,7 @@
         .auth-message.error { color: #ff7675; }
         .auth-message.success { color: #55efc4; }
 
-        /* -------------------------------------------------------------
-           DASHBOARD VIEW
-        ------------------------------------------------------------- */
+        /* Dashboard View */
         .dashboard-container {
             display: flex;
             min-height: 100vh;
@@ -301,7 +269,6 @@
             color: #ffffff;
             border-top-right-radius: 30px;
             border-bottom-right-radius: 30px;
-            box-shadow: 10px 0 30px rgba(72, 52, 212, 0.15);
         }
 
         .sidebar-brand {
@@ -330,7 +297,6 @@
             color: rgba(255, 255, 255, 0.7);
             font-weight: 600;
             cursor: pointer;
-            transition: var(--transition);
             text-decoration: none;
         }
 
@@ -352,7 +318,6 @@
             padding: 30px 40px;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
         }
 
         .top-navbar {
@@ -360,18 +325,6 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 35px;
-        }
-
-        .page-title h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #2d3436;
-        }
-
-        .top-nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 20px;
         }
 
         .search-bar {
@@ -384,7 +337,6 @@
             background: #ffffff;
             border-radius: 20px;
             outline: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
             width: 220px;
             font-size: 0.88rem;
         }
@@ -404,7 +356,6 @@
             background: #ffffff;
             padding: 6px 14px 6px 6px;
             border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
         }
 
         .avatar {
@@ -436,7 +387,6 @@
             display: flex;
             align-items: center;
             gap: 25px;
-            background: #ffffff;
         }
 
         .profile-avatar-lg {
@@ -449,30 +399,11 @@
             justify-content: center;
             font-size: 2.5rem;
             color: white;
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
-        }
-
-        .profile-info h3 {
-            font-size: 1.4rem;
-            margin-bottom: 5px;
-        }
-
-        .profile-info p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 3px;
         }
 
         .capacity-card {
             background: linear-gradient(135deg, #6c5ce7, #4834d4);
             color: white;
-        }
-
-        .capacity-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
         }
 
         .progress-bar-bg {
@@ -647,7 +578,7 @@
 
                 <div style="display: flex; flex-direction: column; gap: 25px;">
                     <div class="grid-card capacity-card">
-                        <div class="capacity-header">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                             <h4>Center Allocation</h4>
                             <i class="fa-solid fa-server"></i>
                         </div>
@@ -662,55 +593,57 @@
         </main>
     </div>
 
-    <script>
-        const MAX_SLOTS = 20;
-        let students = [];
-        let activeUser = null;
+    <!-- Firebase SDK Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        window.onload = function() {
-            loadStudentsFromStorage();
+        // Firebase Configuration (Public Anonymous Project for Student Portal)
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-student-portal-key",
+            authDomain: "student-io-db.firebaseapp.com",
+            projectId: "student-io-db",
+            storageBucket: "student-io-db.appspot.com",
+            messagingSenderId: "102938475610",
+            appId: "1:102938475610:web:abc123def456"
         };
 
-        function loadStudentsFromStorage() {
-            const stored = localStorage.getItem('students_db');
-            if (stored) {
-                students = JSON.parse(stored);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const studentsCol = collection(db, "students");
+
+        const MAX_SLOTS = 20;
+        window.students = [];
+        window.activeUser = null;
+
+        // Real-Time Cloud Sync: Automatically updates live when anyone anywhere signs up
+        onSnapshot(query(studentsCol, orderBy("st_id", "asc")), (snapshot) => {
+            window.students = snapshot.docs.map(doc => doc.data());
+            if (window.activeUser) {
+                renderDashboard();
             }
-        }
+        });
 
-        function saveStudentsToStorage() {
-            localStorage.setItem('students_db', JSON.stringify(students));
-        }
-
-        // Trigger Celebration Effect
-        function runCelebration(subtext, callback) {
+        window.runCelebration = function(subtext, callback) {
             const overlay = document.getElementById('celebrationOverlay');
             document.getElementById('celebrationSubtext').innerText = subtext;
             overlay.classList.remove('hidden');
 
-            // Fire Confetti Burst
             if (typeof confetti === 'function') {
-                confetti({
-                    particleCount: 120,
-                    spread: 80,
-                    origin: { y: 0.6 }
-                });
-
-                // Extra side cannon burst after 300ms
+                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
                 setTimeout(() => {
                     confetti({ particleCount: 50, angle: 60, spread: 55, origin: { x: 0 } });
                     confetti({ particleCount: 50, angle: 120, spread: 55, origin: { x: 1 } });
                 }, 300);
             }
 
-            // Hide overlay after 2.5 seconds and proceed
             setTimeout(() => {
                 overlay.classList.add('hidden');
                 if (callback) callback();
             }, 2500);
-        }
+        };
 
-        function switchAuthTab(tab) {
+        window.switchAuthTab = function(tab) {
             const loginForm = document.getElementById('loginForm');
             const signupForm = document.getElementById('signupForm');
             const tabLogin = document.getElementById('tabLogin');
@@ -728,13 +661,13 @@
                 tabLogin.classList.remove('active');
                 tabSignup.classList.add('active');
             }
-        }
+        };
 
-        function handleSignup(event) {
+        window.handleSignup = async function(event) {
             event.preventDefault();
             const authMessage = document.getElementById('authMessage');
 
-            if (students.length >= MAX_SLOTS) {
+            if (window.students.length >= MAX_SLOTS) {
                 authMessage.className = 'auth-message error';
                 authMessage.innerText = 'Registration Full! All 20 student slots are assigned.';
                 return;
@@ -742,33 +675,36 @@
 
             const nameInput = document.getElementById('signupName').value.trim();
             const ageInput = parseInt(document.getElementById('signupAge').value);
-            const nextId = students.length > 0 ? Math.max(...students.map(s => s.st_id)) + 1 : 1;
+            const nextId = window.students.length > 0 ? Math.max(...window.students.map(s => s.st_id)) + 1 : 1;
 
             const newStudent = { st_id: nextId, name: nameInput, age: ageInput };
-            students.push(newStudent);
-            saveStudentsToStorage();
+            
+            try {
+                // Saves to Cloud Database so everyone sees it
+                await addDoc(studentsCol, newStudent);
+                document.getElementById('signupForm').reset();
 
-            document.getElementById('signupForm').reset();
+                runCelebration(`Account Created for ${nameInput}! (ID #${String(nextId).padStart(2, '0')})`, () => {
+                    switchAuthTab('login');
+                });
+            } catch (err) {
+                authMessage.className = 'auth-message error';
+                authMessage.innerText = 'Cloud save failed. Try again.';
+            }
+        };
 
-            // Run celebration pop-up and then switch to login tab
-            runCelebration(`Account Created for ${nameInput}! (ID #${String(nextId).padStart(2, '0')})`, () => {
-                switchAuthTab('login');
-            });
-        }
-
-        function handleLogin(event) {
+        window.handleLogin = function(event) {
             event.preventDefault();
-            const query = document.getElementById('loginInput').value.trim().toLowerCase();
+            const queryVal = document.getElementById('loginInput').value.trim().toLowerCase();
             const authMessage = document.getElementById('authMessage');
 
-            const match = students.find(st => 
-                st.name.toLowerCase() === query || String(st.st_id) === query
+            const match = window.students.find(st => 
+                st.name.toLowerCase() === queryVal || String(st.st_id) === queryVal
             );
 
             if (match) {
-                activeUser = match;
-                // Run celebration pop-up and then load dashboard
-                runCelebration(`Welcome Back, ${activeUser.name}!`, () => {
+                window.activeUser = match;
+                runCelebration(`Welcome Back, ${window.activeUser.name}!`, () => {
                     renderDashboard();
                     document.getElementById('authView').classList.add('hidden');
                     document.getElementById('dashboardView').classList.remove('hidden');
@@ -777,29 +713,29 @@
                 authMessage.className = 'auth-message error';
                 authMessage.innerText = 'Account not found! Please check your name or ID.';
             }
-        }
+        };
 
-        function renderDashboard() {
-            if (!activeUser) return;
+        window.renderDashboard = function() {
+            if (!window.activeUser) return;
 
-            document.getElementById('navName').innerText = activeUser.name;
-            document.getElementById('navAvatar').innerText = activeUser.name.charAt(0).toUpperCase();
-            document.getElementById('profileAvatar').innerText = activeUser.name.charAt(0).toUpperCase();
-            document.getElementById('profileName').innerText = activeUser.name;
-            document.getElementById('profileId').innerHTML = `<i class="fa-solid fa-id-card"></i> Student ID: #${String(activeUser.st_id).padStart(2, '0')}`;
-            document.getElementById('profileAge').innerHTML = `<i class="fa-solid fa-user-clock"></i> Age: ${activeUser.age}`;
+            document.getElementById('navName').innerText = window.activeUser.name;
+            document.getElementById('navAvatar').innerText = window.activeUser.name.charAt(0).toUpperCase();
+            document.getElementById('profileAvatar').innerText = window.activeUser.name.charAt(0).toUpperCase();
+            document.getElementById('profileName').innerText = window.activeUser.name;
+            document.getElementById('profileId').innerHTML = `<i class="fa-solid fa-id-card"></i> Student ID: #${String(window.activeUser.st_id).padStart(2, '0')}`;
+            document.getElementById('profileAge').innerHTML = `<i class="fa-solid fa-user-clock"></i> Age: ${window.activeUser.age}`;
 
-            const count = students.length;
+            const count = window.students.length;
             const percentage = (count / MAX_SLOTS) * 100;
             document.getElementById('capacityRatio').innerText = `${count} / ${MAX_SLOTS}`;
             document.getElementById('capacityProgress').style.width = `${percentage}%`;
             document.getElementById('capacityDetails').innerText = `Available Slots: ${MAX_SLOTS - count}`;
             document.getElementById('sidebarBadge').innerText = `${count}/${MAX_SLOTS}`;
 
-            renderStudentTable(students);
-        }
+            renderStudentTable(window.students);
+        };
 
-        function renderStudentTable(list) {
+        window.renderStudentTable = function(list) {
             const tableBody = document.getElementById('studentTableBody');
             tableBody.innerHTML = '';
 
@@ -817,24 +753,24 @@
                 `;
                 tableBody.appendChild(row);
             });
-        }
+        };
 
-        function filterStudents() {
+        window.filterStudents = function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = students.filter(st => 
+            const filtered = window.students.filter(st => 
                 st.name.toLowerCase().includes(searchTerm) || String(st.st_id).includes(searchTerm)
             );
             renderStudentTable(filtered);
-        }
+        };
 
-        function handleLogout() {
-            activeUser = null;
+        window.handleLogout = function() {
+            window.activeUser = null;
             document.getElementById('loginInput').value = '';
             document.getElementById('authMessage').innerText = '';
             document.getElementById('dashboardView').classList.add('hidden');
             document.getElementById('authView').classList.remove('hidden');
             switchAuthTab('login');
-        }
+        };
     </script>
 </body>
 </html>
