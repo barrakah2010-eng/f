@@ -598,14 +598,16 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Firebase Configuration (Public Anonymous Project for Student Portal)
+        // Your Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyD-student-portal-key",
-            authDomain: "student-io-db.firebaseapp.com",
-            projectId: "student-io-db",
-            storageBucket: "student-io-db.appspot.com",
-            messagingSenderId: "102938475610",
-            appId: "1:102938475610:web:abc123def456"
+            apiKey: "AIzaSyAyZFvDYKw1wikerlF_HX_q_gQdXoPvhyI",
+            authDomain: "your-guide-to-germany.firebaseapp.com",
+            databaseURL: "https://your-guide-to-germany-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "your-guide-to-germany",
+            storageBucket: "your-guide-to-germany.firebasestorage.app",
+            messagingSenderId: "1029641813508",
+            appId: "1:1029641813508:web:a1b51bf77ad841af437f51",
+            measurementId: "G-NNPZNGJ9RP"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -616,7 +618,7 @@
         window.students = [];
         window.activeUser = null;
 
-        // Real-Time Cloud Sync: Automatically updates live when anyone anywhere signs up
+        // Real-Time Sync across all devices
         onSnapshot(query(studentsCol, orderBy("st_id", "asc")), (snapshot) => {
             window.students = snapshot.docs.map(doc => doc.data());
             if (window.activeUser) {
@@ -680,7 +682,6 @@
             const newStudent = { st_id: nextId, name: nameInput, age: ageInput };
             
             try {
-                // Saves to Cloud Database so everyone sees it
                 await addDoc(studentsCol, newStudent);
                 document.getElementById('signupForm').reset();
 
@@ -689,7 +690,7 @@
                 });
             } catch (err) {
                 authMessage.className = 'auth-message error';
-                authMessage.innerText = 'Cloud save failed. Try again.';
+                authMessage.innerText = 'Cloud save failed. Please check Firestore permissions.';
             }
         };
 
