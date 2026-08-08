@@ -34,10 +34,9 @@
             /* Poppy Sunset Admin Theme Palette */
             --poppy-red: #ff2d55;
             --poppy-hover: #e01e43;
-            --poppy-glow: rgba(255, 45, 85, 0.35);
-            --poppy-bg: linear-gradient(180deg, #090314 0%, #1a0410 40%, #36020c 100%);
-            --poppy-card-glass: rgba(25, 8, 16, 0.7);
-            --poppy-card-border: rgba(255, 45, 85, 0.25);
+            --poppy-glow: rgba(255, 45, 85, 0.4);
+            --poppy-card-glass: rgba(12, 5, 16, 0.72);
+            --poppy-card-border: rgba(255, 45, 85, 0.3);
         }
 
         * {
@@ -58,9 +57,7 @@
             display: none !important;
         }
 
-        /* -------------------------------------------------------------
-           SUBTLE FLOATING "K" LOGO TRIGGER
-        ------------------------------------------------------------- */
+        /* FLOATING "K" BUTTON */
         .floating-k-btn {
             position: fixed;
             bottom: 20px;
@@ -90,9 +87,7 @@
             transform: scale(1.1);
         }
 
-        /* -------------------------------------------------------------
-           CELEBRATION OVERLAY
-        ------------------------------------------------------------- */
+        /* CELEBRATION OVERLAY */
         .celebration-overlay {
             position: fixed;
             top: 0;
@@ -150,9 +145,7 @@
             to { opacity: 1; }
         }
 
-        /* -------------------------------------------------------------
-           USER AUTHENTICATION VIEW
-        ------------------------------------------------------------- */
+        /* USER AUTHENTICATION VIEW */
         .auth-container {
             min-height: 100vh;
             display: flex;
@@ -295,9 +288,7 @@
         .auth-message.error { color: #ff7675; }
         .auth-message.success { color: #55efc4; }
 
-        /* -------------------------------------------------------------
-           USER DASHBOARD VIEW
-        ------------------------------------------------------------- */
+        /* USER DASHBOARD VIEW */
         .dashboard-container {
             display: flex;
             min-height: 100vh;
@@ -495,36 +486,29 @@
             font-size: 0.8rem;
         }
 
-        /* -------------------------------------------------------------
-           ADMIN GATE & DASHBOARD (POPPY TWILIGHT THEME)
-        ------------------------------------------------------------- */
+        /* ADMIN GATE & DASHBOARD WITH CUSTOM IMAGE BACKGROUND */
         .admin-space-bg {
-            background: var(--poppy-bg);
+            background-image: linear-gradient(180deg, rgba(5, 2, 10, 0.65) 0%, rgba(18, 2, 10, 0.8) 100%), 
+                              url('https://i.ibb.co/6y4t6yH/poppy-sunset.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             min-height: 100vh;
             color: #ffffff;
             position: relative;
-        }
-
-        .admin-space-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 100%, var(--poppy-glow) 0%, rgba(0, 0, 0, 0) 60%);
-            pointer-events: none;
         }
 
         .admin-auth-card {
             background: var(--poppy-card-glass);
             border: 1px solid var(--poppy-card-border);
             backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border-radius: var(--radius-lg);
             width: 100%;
             max-width: 420px;
             padding: 40px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.85);
             text-align: center;
             z-index: 10;
         }
@@ -553,10 +537,11 @@
             background: var(--poppy-card-glass);
             border: 1px solid var(--poppy-card-border);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: var(--radius-lg);
             padding: 25px;
             color: #ffffff;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
 
         .admin-table {
@@ -567,9 +552,9 @@
         .admin-table th {
             text-align: left;
             padding: 14px 18px;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.65);
             font-size: 0.85rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .admin-table td {
@@ -595,9 +580,9 @@
         }
 
         .badge-poppy-slot {
-            background: rgba(255, 45, 85, 0.15);
+            background: rgba(255, 45, 85, 0.2);
             color: var(--poppy-red);
-            border: 1px solid rgba(255, 45, 85, 0.3);
+            border: 1px solid rgba(255, 45, 85, 0.4);
             padding: 4px 10px;
             border-radius: 12px;
             font-weight: 700;
@@ -613,7 +598,7 @@
 </head>
 <body>
 
-    <!-- SUBTLE FLOATING "K" BUTTON -->
+    <!-- FLOATING "K" BUTTON -->
     <div class="floating-k-btn" onclick="navigateToAdminGate()" title="Admin Gateway">K</div>
 
     <!-- CELEBRATION OVERLAY -->
@@ -622,9 +607,7 @@
         <p class="celebration-subtext" id="celebrationSubtext">Welcome to Student Center!</p>
     </div>
 
-    <!-- -------------------------------------------------------------
-         SECTION 1: USER AUTHENTICATION VIEW
-    ------------------------------------------------------------- -->
+    <!-- SECTION 1: USER AUTHENTICATION VIEW -->
     <div id="authView" class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
@@ -673,9 +656,7 @@
         </div>
     </div>
 
-    <!-- -------------------------------------------------------------
-         SECTION 2: USER DASHBOARD VIEW
-    ------------------------------------------------------------- -->
+    <!-- SECTION 2: USER DASHBOARD VIEW -->
     <div id="dashboardView" class="dashboard-container hidden">
         <aside class="sidebar">
             <div>
@@ -755,14 +736,12 @@
         </main>
     </div>
 
-    <!-- -------------------------------------------------------------
-         SECTION 3: STANDALONE ADMIN GATEWAY (PROMPT SPACE)
-    ------------------------------------------------------------- -->
+    <!-- SECTION 3: ADMIN GATEWAY -->
     <div id="adminGateView" class="admin-space-bg hidden" style="display: flex; justify-content: center; align-items: center; padding: 20px;">
         <div class="admin-auth-card">
             <i class="fa-solid fa-user-shield" style="font-size: 3.5rem; color: var(--poppy-red); margin-bottom: 15px;"></i>
             <h1 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 6px;">Admin Authorization</h1>
-            <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.88rem; margin-bottom: 25px;">Restricted Space for Koussay Boubakri</p>
+            <p style="color: rgba(255, 255, 255, 0.65); font-size: 0.88rem; margin-bottom: 25px;">Restricted Space for Koussay Boubakri</p>
             
             <form onsubmit="verifyAdminPassword(event)">
                 <div class="form-group">
@@ -778,17 +757,14 @@
         </div>
     </div>
 
-    <!-- -------------------------------------------------------------
-         SECTION 4: STANDALONE ADMIN DASHBOARD (POPPY THEME)
-    ------------------------------------------------------------- -->
+    <!-- SECTION 4: ADMIN DASHBOARD -->
     <div id="adminDashboardView" class="admin-space-bg hidden" style="padding: 40px; overflow-y: auto;">
         <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px;">
             
-            <!-- Top Admin Header -->
             <div class="admin-card-glass" style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h2 style="font-size: 1.8rem; font-weight: 800; color: #ffffff;"><i class="fa-solid fa-shield-halved" style="color: var(--poppy-red); margin-right: 10px;"></i> Admin Control Panel</h2>
-                    <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; margin-top: 4px;">Koussay Boubakri Cloud Management Center</p>
+                    <p style="color: rgba(255, 255, 255, 0.65); font-size: 0.9rem; margin-top: 4px;">Koussay Boubakri Cloud Management Center</p>
                 </div>
                 <div style="display: flex; gap: 12px;">
                     <button onclick="exportToCSV()" class="btn-poppy-action" style="background: rgba(255,255,255,0.1); border: 1px solid var(--poppy-card-border);"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
@@ -797,7 +773,6 @@
                 </div>
             </div>
 
-            <!-- Admin Data Table -->
             <div class="admin-card-glass">
                 <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="font-size: 1.2rem; font-weight: 700;">Live Realtime Database Records</h3>
@@ -844,7 +819,7 @@
         window.students = [];
         window.activeUser = null;
 
-        // Keypress trigger for shortcut "k"
+        // Shortcut "k" trigger
         document.addEventListener('keydown', (e) => {
             if (e.key === 'k' || e.key === 'K') {
                 navigateToAdminGate();
