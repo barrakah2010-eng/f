@@ -17,6 +17,7 @@
             --primary-hover: #5b4bc4;
             --primary-light: #a29bfe;
             --accent-green: #00b894;
+            --accent-red: #d63031;
             --bg-dark: #0f1123;
             --card-glass: rgba(255, 255, 255, 0.08);
             --card-glass-border: rgba(255, 255, 255, 0.15);
@@ -48,6 +49,13 @@
 
         .hidden {
             display: none !important;
+        }
+
+        /* Secret Trigger Hotspot */
+        .secret-k-trigger {
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.2s ease;
         }
 
         /* Celebration Overlay */
@@ -449,6 +457,63 @@
             font-size: 0.8rem;
         }
 
+        /* ADMIN PANEL CUSTOM STYLING */
+        .admin-header-badge {
+            background: linear-gradient(135deg, #ff7675, #d63031);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .btn-danger {
+            background: #ff7675;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-danger:hover {
+            background: var(--accent-red);
+        }
+
+        .btn-action-small {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        /* Modal Popup */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-card {
+            background: #1e1035;
+            border: 1px solid var(--card-glass-border);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
         @media (max-width: 992px) {
             .dashboard-grid { grid-template-columns: 1fr; }
             .dashboard-container { flex-direction: column; }
@@ -458,9 +523,26 @@
 </head>
 <body>
 
+    <!-- SECRET ADMIN PASSWORD MODAL -->
+    <div id="adminAuthModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <i class="fa-solid fa-user-shield" style="font-size: 3rem; color: var(--primary-light); margin-bottom: 15px;"></i>
+            <h2 style="color: white; margin-bottom: 8px;">Admin Verification</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Restricted Koussay Boubakri Control Panel</p>
+            <form onsubmit="verifyAdminPassword(event)">
+                <div class="form-group">
+                    <input type="password" id="adminPasswordInput" class="form-control" placeholder="Enter Admin Password" style="text-align: center;" required autofocus>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 5px;">Unlock Panel</button>
+                <button type="button" onclick="closeAdminModal()" style="background: transparent; border: none; color: var(--text-muted); margin-top: 15px; cursor: pointer; font-size: 0.85rem;">Cancel</button>
+            </form>
+            <div id="adminAuthError" class="auth-message error" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+
     <!-- CELEBRATION OVERLAY -->
     <div id="celebrationOverlay" class="celebration-overlay hidden">
-        <h1 class="rainbow-title">WELCOME!</h1>
+        <h1 class="rainbow-title">THANK YOU!</h1>
         <p class="celebration-subtext" id="celebrationSubtext">Welcome to Student Center!</p>
     </div>
 
@@ -519,10 +601,11 @@
             <div>
                 <div class="sidebar-brand">
                     <i class="fa-solid fa-graduation-cap"></i>
-                    <span>SUCCESS</span>
+                    <span><span class="secret-k-trigger" onclick="openAdminModal()">S</span>UCCESS</span>
                 </div>
                 <ul class="sidebar-menu">
-                    <li><a href="#" class="nav-item active"><i class="fa-solid fa-user"></i> Profile</a></li>
+                    <li><a href="#" class="nav-item active" id="navProfileTab" onclick="switchDashboardTab('user')"><i class="fa-solid fa-user"></i> Profile</a></li>
+                    <li><a href="#" class="nav-item" id="navAdminTab" onclick="openAdminModal()"><i class="fa-solid fa-user-shield"></i> Admin Panel</a></li>
                     <li><a href="#" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Capacity <span class="badge" id="sidebarBadge">0/20</span></a></li>
                 </ul>
             </div>
@@ -534,7 +617,7 @@
         <main class="main-wrapper">
             <header class="top-navbar">
                 <div class="page-title">
-                    <h2>Dashboard</h2>
+                    <h2 id="pageTitleHeading">Dashboard <span id="adminBadge" class="admin-header-badge hidden">ADMIN MODE</span></h2>
                 </div>
                 <div class="top-nav-actions">
                     <div class="search-bar">
@@ -548,7 +631,8 @@
                 </div>
             </header>
 
-            <div class="dashboard-grid">
+            <!-- USER VIEW GRID -->
+            <div id="userSection" class="dashboard-grid">
                 <div style="display: flex; flex-direction: column; gap: 25px;">
                     <div class="grid-card profile-card">
                         <div class="profile-avatar-lg" id="profileAvatar">U</div>
@@ -590,15 +674,44 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ADMIN VIEW GRID (HIDDEN BY DEFAULT) -->
+            <div id="adminSection" class="hidden" style="display: flex; flex-direction: column; gap: 25px;">
+                <div class="grid-card" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3>Koussay Boubakri's Admin Control Panel</h3>
+                        <p style="color: var(--text-muted); font-size: 0.85rem;">Manage real-time cloud registrations and slots</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="exportToCSV()" class="btn-primary" style="padding: 10px 18px; font-size: 0.85rem; width: auto; margin-top: 0; background: var(--primary); color: white;">Export CSV</button>
+                        <button onclick="clearAllStudents()" class="btn-danger" style="padding: 10px 18px; font-size: 0.85rem;">Clear All Slots</button>
+                    </div>
+                </div>
+
+                <div class="grid-card">
+                    <table class="student-table">
+                        <thead>
+                            <tr>
+                                <th>SLOT ID</th>
+                                <th>FIREBASE RECORD ID</th>
+                                <th>STUDENT NAME</th>
+                                <th>AGE</th>
+                                <th>ADMIN ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
         </main>
     </div>
 
     <!-- Firebase Realtime Database SDK Modules -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Firebase Configuration for student-io-48ca8 project
         const firebaseConfig = {
             apiKey: "AIzaSyBZ7LJgW_HB6ETsh45znsWTtvYf359DAC8",
             authDomain: "student-io-48ca8.firebaseapp.com",
@@ -616,20 +729,120 @@
 
         const MAX_SLOTS = 20;
         window.students = [];
+        window.rawStudentData = {};
         window.activeUser = null;
+        window.isAdmin = false;
+
+        // Keypress trigger for shortcut "k"
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'k' || e.key === 'K') {
+                if (!window.isAdmin) {
+                    openAdminModal();
+                }
+            }
+        });
 
         // Realtime Listener
         onValue(studentsRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                window.students = Object.values(data).sort((a, b) => a.st_id - b.st_id);
+                window.rawStudentData = data;
+                window.students = Object.keys(data).map(key => ({
+                    firebaseKey: key,
+                    ...data[key]
+                })).sort((a, b) => a.st_id - b.st_id);
             } else {
+                window.rawStudentData = {};
                 window.students = [];
             }
+
             if (window.activeUser) {
                 renderDashboard();
             }
         });
+
+        window.openAdminModal = function() {
+            document.getElementById('adminAuthError').innerText = '';
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminAuthModal').classList.remove('hidden');
+            setTimeout(() => { document.getElementById('adminPasswordInput').focus(); }, 100);
+        };
+
+        window.closeAdminModal = function() {
+            document.getElementById('adminAuthModal').classList.add('hidden');
+        };
+
+        window.verifyAdminPassword = function(event) {
+            event.preventDefault();
+            const pass = document.getElementById('adminPasswordInput').value;
+            if (pass === "student123123") {
+                window.isAdmin = true;
+                closeAdminModal();
+                
+                // Set active user as Koussay Boubakri if not logged in
+                if (!window.activeUser) {
+                    window.activeUser = { st_id: 0, name: "Koussay Boubakri", age: "Admin" };
+                }
+                
+                document.getElementById('authView').classList.add('hidden');
+                document.getElementById('dashboardView').classList.remove('hidden');
+                switchDashboardTab('admin');
+            } else {
+                document.getElementById('adminAuthError').innerText = "Incorrect Password!";
+            }
+        };
+
+        window.switchDashboardTab = function(type) {
+            const userSection = document.getElementById('userSection');
+            const adminSection = document.getElementById('adminSection');
+            const adminBadge = document.getElementById('adminBadge');
+
+            if (type === 'admin' && window.isAdmin) {
+                userSection.classList.add('hidden');
+                adminSection.classList.remove('hidden');
+                adminBadge.classList.remove('hidden');
+                document.getElementById('navAdminTab').classList.add('active');
+                document.getElementById('navProfileTab').classList.remove('active');
+                renderAdminTable();
+            } else {
+                adminSection.classList.add('hidden');
+                userSection.classList.remove('hidden');
+                adminBadge.classList.add('hidden');
+                document.getElementById('navProfileTab').classList.add('active');
+                document.getElementById('navAdminTab').classList.remove('active');
+            }
+        };
+
+        window.deleteStudent = async function(key) {
+            if (confirm("Are you sure you want to remove this student entry?")) {
+                const singleStudentRef = ref(db, `students/${key}`);
+                await remove(singleStudentRef);
+            }
+        };
+
+        window.clearAllStudents = async function() {
+            if (confirm("WARNING: This will delete ALL registered student slots! Proceed?")) {
+                await remove(studentsRef);
+            }
+        };
+
+        window.exportToCSV = function() {
+            if (window.students.length === 0) {
+                alert("No student data available to export.");
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,Slot ID,Name,Age,Firebase Key\n";
+            window.students.forEach(st => {
+                csvContent += `${st.st_id},"${st.name}",${st.age},${st.firebaseKey}\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "student_center_portal.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
 
         window.runCelebration = function(subtext, callback) {
             const overlay = document.getElementById('celebrationOverlay');
@@ -739,6 +952,9 @@
             document.getElementById('sidebarBadge').innerText = `${count}/${MAX_SLOTS}`;
 
             renderStudentTable(window.students);
+            if (window.isAdmin) {
+                renderAdminTable();
+            }
         };
 
         window.renderStudentTable = function(list) {
@@ -761,6 +977,31 @@
             });
         };
 
+        window.renderAdminTable = function() {
+            const tableBody = document.getElementById('adminTableBody');
+            if (!tableBody) return;
+            tableBody.innerHTML = '';
+
+            if (window.students.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No active student registrations in Firebase database.</td></tr>`;
+                return;
+            }
+
+            window.students.forEach(st => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><span class="badge-slot">Slot #${String(st.st_id).padStart(2, '0')}</span></td>
+                    <td style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">${st.firebaseKey}</td>
+                    <td style="font-weight: 600;">${st.name}</td>
+                    <td>${st.age}</td>
+                    <td>
+                        <button onclick="deleteStudent('${st.firebaseKey}')" class="btn-danger btn-action-small"><i class="fa-solid fa-trash"></i> Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        };
+
         window.filterStudents = function() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const filtered = window.students.filter(st => 
@@ -771,6 +1012,7 @@
 
         window.handleLogout = function() {
             window.activeUser = null;
+            window.isAdmin = false;
             document.getElementById('loginInput').value = '';
             document.getElementById('authMessage').innerText = '';
             document.getElementById('dashboardView').classList.add('hidden');
