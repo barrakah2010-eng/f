@@ -598,16 +598,15 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Firebase Configuration
+        // Firebase Configuration for student-io-48ca8 project
         const firebaseConfig = {
-            apiKey: "AIzaSyAyZFvDYKw1wikerlF_HX_q_gQdXoPvhyI",
-            authDomain: "your-guide-to-germany.firebaseapp.com",
-            databaseURL: "https://your-guide-to-germany-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "your-guide-to-germany",
-            storageBucket: "your-guide-to-germany.firebasestorage.app",
-            messagingSenderId: "1029641813508",
-            appId: "1:1029641813508:web:a1b51bf77ad841af437f51",
-            measurementId: "G-NNPZNGJ9RP"
+            apiKey: "YOUR_API_KEY_HERE",
+            authDomain: "student-io-48ca8.firebaseapp.com",
+            databaseURL: "https://student-io-48ca8-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "student-io-48ca8",
+            storageBucket: "student-io-48ca8.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID_HERE",
+            appId: "YOUR_APP_ID_HERE"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -618,7 +617,7 @@
         window.students = [];
         window.activeUser = null;
 
-        // Realtime Database listener
+        // Realtime Listener
         onValue(studentsRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -704,7 +703,6 @@
             const queryVal = document.getElementById('loginInput').value.trim().toLowerCase();
             const authMessage = document.getElementById('authMessage');
 
-            // Name or ID matching authentication
             const match = window.students.find(st => 
                 st.name.toLowerCase() === queryVal || String(st.st_id) === queryVal
             );
