@@ -593,12 +593,12 @@
         </main>
     </div>
 
-    <!-- Firebase SDK Modules -->
+    <!-- Firebase Realtime Database SDK Modules -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Your Firebase configuration
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAyZFvDYKw1wikerlF_HX_q_gQdXoPvhyI",
             authDomain: "your-guide-to-germany.firebaseapp.com",
@@ -611,16 +611,21 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const studentsCol = collection(db, "students");
+        const db = getDatabase(app);
+        const studentsRef = ref(db, 'students');
 
         const MAX_SLOTS = 20;
         window.students = [];
         window.activeUser = null;
 
-        // Real-Time Sync across all devices
-        onSnapshot(query(studentsCol, orderBy("st_id", "asc")), (snapshot) => {
-            window.students = snapshot.docs.map(doc => doc.data());
+        // Realtime Database listener
+        onValue(studentsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                window.students = Object.values(data).sort((a, b) => a.st_id - b.st_id);
+            } else {
+                window.students = [];
+            }
             if (window.activeUser) {
                 renderDashboard();
             }
@@ -682,7 +687,7 @@
             const newStudent = { st_id: nextId, name: nameInput, age: ageInput };
             
             try {
-                await addDoc(studentsCol, newStudent);
+                await push(studentsRef, newStudent);
                 document.getElementById('signupForm').reset();
 
                 runCelebration(`Account Created for ${nameInput}! (ID #${String(nextId).padStart(2, '0')})`, () => {
@@ -690,7 +695,7 @@
                 });
             } catch (err) {
                 authMessage.className = 'auth-message error';
-                authMessage.innerText = 'Cloud save failed. Please check Firestore permissions.';
+                authMessage.innerText = 'Cloud save failed. Check Realtime Database rules.';
             }
         };
 
@@ -699,6 +704,7 @@
             const queryVal = document.getElementById('loginInput').value.trim().toLowerCase();
             const authMessage = document.getElementById('authMessage');
 
+            // Name or ID matching authentication
             const match = window.students.find(st => 
                 st.name.toLowerCase() === queryVal || String(st.st_id) === queryVal
             );
