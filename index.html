@@ -31,12 +31,12 @@
             --radius-sm: 10px;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
-            /* Poppy Sunset Admin Theme Palette */
+            /* Poppy Sunset Admin Palette */
             --poppy-red: #ff2d55;
             --poppy-hover: #e01e43;
-            --poppy-glow: rgba(255, 45, 85, 0.4);
-            --poppy-card-glass: rgba(12, 5, 16, 0.72);
-            --poppy-card-border: rgba(255, 45, 85, 0.3);
+            --poppy-glow: rgba(255, 45, 85, 0.45);
+            --poppy-card-glass: rgba(18, 5, 22, 0.85);
+            --poppy-card-border: rgba(255, 45, 85, 0.35);
         }
 
         * {
@@ -486,14 +486,12 @@
             font-size: 0.8rem;
         }
 
-        /* ADMIN GATE & DASHBOARD WITH CUSTOM IMAGE BACKGROUND */
+        /* PURE CSS POPPY SUNSET BACKGROUND */
         .admin-space-bg {
-            background-image: linear-gradient(180deg, rgba(5, 2, 10, 0.65) 0%, rgba(18, 2, 10, 0.8) 100%), 
-                              url('https://i.ibb.co/6y4t6yH/poppy-sunset.jpg');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            background: 
+                radial-gradient(ellipse at 50% 85%, #ff2d55 0%, #b80d38 25%, #4a031e 50%, #0d0214 85%),
+                linear-gradient(180deg, #05010a 0%, #170318 60%, #3d0213 100%);
+            background-blend-mode: screen;
             min-height: 100vh;
             color: #ffffff;
             position: relative;
